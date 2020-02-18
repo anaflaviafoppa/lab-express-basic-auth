@@ -9,12 +9,19 @@ const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
 
 const indexRouter = require('./routes/index');
+const hbs = require('hbs');
+
+//ROUTES:
+const authenticationRouter = require('./routes/authentication');
+
 
 const app = express();
 
 // Setup view engine
 app.set('views', join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
+hbs.registerPartials(join(__dirname, 'views/partials'));
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -33,6 +40,8 @@ app.use(
 );
 
 app.use('/', indexRouter);
+app.use('/authentication', authenticationRouter);
+
 
 // Catch missing routes and forward to error handler
 app.use((req, res, next) => {
@@ -40,7 +49,7 @@ app.use((req, res, next) => {
 });
 
 // Catch all error handler
-app.use((error, req, res, next) => {
+app.use((error, req, res) => {
   // Set error information, with stack only available in development
   res.locals.message = error.message;
   res.locals.error = req.app.get('env') === 'development' ? error : {};
